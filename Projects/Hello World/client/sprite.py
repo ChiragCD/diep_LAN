@@ -109,3 +109,14 @@ class tank(sprite):
                     self.speed_y /= 0.707
                 else:
                     self.speed_x -= 1 * self.max_speed
+
+class bullet(sprite):
+
+    def __init__(self,  Type, pos_x, pos_y, orientation):
+
+        sprite.__init__(self,  Type, pos_x, pos_y, orientation)
+
+    # Function to update the properties of the sprite and bullet when a collision occurs
+    def collision(self , sprite):
+
+        pass
