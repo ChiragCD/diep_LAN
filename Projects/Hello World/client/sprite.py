@@ -43,11 +43,15 @@ class tank(sprite):
 
     def rotate_clockwise(self, *args):
 
-        pass
+        self.orientation -= 5
+        # Will have to redraw the sprite
+        self.update_rect()
 
     def rotate_anticlockwise(self, *args):
 
-        pass
+        self.orientation += 5
+        # Will have to redraw the sprite
+        self.update_rect()
 
     def update_rect(self):
 
@@ -108,4 +112,15 @@ class tank(sprite):
                     self.speed_x -= 0.707 * self.max_speed
                     self.speed_y /= 0.707
                 else:
-                    self.speed_x -= 1 * self.max_speed
+                    self.speed_x -= 1 * self.max_speeda
+
+class bullet(sprite):
+
+    def __init__(self,  Type, pos_x, pos_y, orientation):
+
+        sprite.__init__(self,  Type, pos_x, pos_y, orientation)
+
+    # Function to update the properties of the sprite and bullet when a collision occurs
+    def collision(self , sprite):
+
+        pass
