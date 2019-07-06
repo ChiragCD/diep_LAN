@@ -1,4 +1,4 @@
-import pygame
+import pygame, math
 import draw_sprite
 from sprite_config import data
 
@@ -26,12 +26,14 @@ class tank(sprite):
 
         sprite.__init__(self, Type, pos_x, pos_y, orientation)
         self.field_of_view = data[Type]["field_of_view"]
+        self.turret = turret(data[Type]["linked_turret"], self)
 
     def move(self):
 
         self.pos_x += self.speed_x
         self.pos_y += self.speed_y
         self.update_rect()
+        self.turret.move()
 
     def shoot(self, *args):
 
@@ -40,6 +42,14 @@ class tank(sprite):
     def autoshoot(self, *args):
 
         pass
+
+    def reorient(self):
+        
+        x, y = pygame.mouse.get_pos()
+        x -= self.field_of_view               ## relative to centre
+        y -= self.field_of_view
+        self.orientation = -1 * math.degrees(math.atan(y / x))  ## -1 handles pygame's inverted y-axis
+        self.turret.reorient(self.orientation)
 
     def rotate_clockwise(self, *args):
 
@@ -55,8 +65,8 @@ class tank(sprite):
 
     def update_rect(self):
 
-        self.rect.x = 250 - self.radius
-        self.rect.y = 250 - self.radius
+        self.rect.x = self.pos_x - self.radius
+        self.rect.y = self.pos_y - self.radius
 
         ##self.rect.x = int(self.pos_x) - self.radius          ## the image is pasted on screen using its top left corner, rather than centre (pos_x, pos_y)
         ##self.rect.y = int(self.pos_y) - self.radius
@@ -112,7 +122,7 @@ class tank(sprite):
                     self.speed_x -= 0.707 * self.max_speed
                     self.speed_y /= 0.707
                 else:
-                    self.speed_x -= 1 * self.max_speeda
+                    self.speed_x -= 1 * self.max_speed
 
 class bullet(sprite):
 
@@ -124,3 +134,31 @@ class bullet(sprite):
     def collision(self , sprite):
 
         pass
+
+class turret(sprite):
+
+    def __init__(self, Type, owner_tank):
+
+        self.tank = owner_tank
+        self.dimension = 2 * max(data[Type]["length"], data[Type]["width"])
+        sprite.__init__(self, Type, owner_tank.pos_x, owner_tank.pos_y, owner_tank.orientation)
+        self.type = Type
+
+    def update_rect(self):
+
+        self.rect.x = self.tank.pos_x - self.dimension / 2  ## self.pos_x, pos_y are not used or maintained, these are always expected to be same as that of tank
+        self.rect.y = self.tank.pos_y - self.dimension / 2
+
+    def move(self):
+
+        self.update_rect()
+
+    def reorient(self, angle):
+        
+        if(abs(self.orientation - angle) > 2):              ## Don't worry about small variations.
+            self.image = pygame.transform.rotate(self.image, angle - self.orientation)
+            self.orientation = angle
+            self.rect = self.image.get_rect()
+            self.dimension = max(self.rect.height, self.rect.width)
+            self.update_rect()
+

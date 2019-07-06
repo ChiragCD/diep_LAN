@@ -8,6 +8,7 @@ class program(object):
         pygame.init()
         self.tank = sprite.tank(0, 900, 900, 0)
         self.screen = pygame.display.set_mode((500, 500))
+        self.map = pygame.Surface((10000, 10000))
         self.back = pygame.image.load("back.jpeg").convert()
 
     def end(self):
@@ -18,7 +19,7 @@ class program(object):
     async def main(self):
 
         self.own_tank = pygame.sprite.Group()
-        self.own_tank.add(self.tank)
+        self.own_tank.add(self.tank, self.tank.turret)
         self.groups = [self.own_tank]
         
         loop = asyncio.get_running_loop()
@@ -34,6 +35,9 @@ class program(object):
         
         loop.call_at(loop.time() + 0.01, self.input_handler)
         for event in pygame.event.get():
+            if(event.type == pygame.MOUSEMOTION):
+                action[event.type](self.tank)       ## track mouse motion
+                continue
             if(event.type == pygame.KEYDOWN):
                 action[event.key](self.tank, event.key, 1)     ## 1 represents key down
                 continue
@@ -59,9 +63,10 @@ class program(object):
     def output(self):
 
         loop.call_at(loop.time() + 0.02, self.output)
-        self.screen.blit(self.back, (self.tank.field_of_view - self.tank.pos_x, self.tank.field_of_view - self.tank.pos_y))
+        self.map.blit(self.back, (0, 0))
         for group in self.groups:
-            group.draw(self.screen)
+            group.draw(self.map)
+        self.screen.blit(self.map, (self.tank.field_of_view - self.tank.pos_x, self.tank.field_of_view - self.tank.pos_y))
         pygame.display.flip()
 
 loop = asyncio.get_event_loop()

@@ -8,3 +8,4 @@ class chart(Enum):
     AUTOSHOOT = tank.autoshoot
     ROTATE_CLOCKWISE = tank.rotate_clockwise
     ROTATE_ANTICLOCKWISE = tank.rotate_anticlockwise
+    REORIENT = tank.reorient
