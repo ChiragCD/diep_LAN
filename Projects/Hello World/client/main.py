@@ -56,7 +56,7 @@ class program(object):
         """
         
         loop = asyncio.get_running_loop()
-        loop.call_at(loop.time() + 0.01, self.input_handler)
+        loop.call_at(loop.time() + 0.04, self.input_handler)
         for event in pygame.event.get():
             if(event.type == pygame.MOUSEMOTION):
                 action[event.type](self.tank)       ## track mouse motion

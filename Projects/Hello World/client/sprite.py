@@ -36,6 +36,7 @@ class tank(sprite):
         sprite.__init__(self, Type, pos_x, pos_y, orientation)
         self.field_of_view = data[Type]["field_of_view"]
         self.turret = turret(data[Type]["linked_turret"], self)
+        self.movement_state = set()
 
     def move(self):
 
@@ -98,57 +99,30 @@ class tank(sprite):
         """
         Using keyboard keys, decide the tank's speed.
         """
+        
+        speeds = {() : (0, 0), ("U",) : (0, -1), ("D",) : (0, 1), ("L",) : (-1, 0), ("R",) : (1, 0), ("L", "U") : (-0.707, -0.707), ("R", "U") : (0.707, -0.707), ("D", "L") : (-0.707, 0.707), ("D", "R") : (0.707, 0.707)}
 
-        if(pressed):
-            if(key == pygame.K_UP):
-                if(self.speed_x):
-                    self.speed_y -= 0.707 * self.max_speed
-                    self.speed_x *= 0.707
-                else:
-                    self.speed_y -= 1 * self.max_speed
-            if(key == pygame.K_DOWN):
-                if(self.speed_x):
-                    self.speed_y += 0.707 * self.max_speed
-                    self.speed_x *= 0.707
-                else:
-                    self.speed_y += 1 * self.max_speed
-            if(key == pygame.K_LEFT):
-                if(self.speed_y):
-                    self.speed_x -= 0.707 * self.max_speed
-                    self.speed_y *= 0.707
-                else:
-                    self.speed_x -= 1 * self.max_speed
-            if(key == pygame.K_RIGHT):
-                if(self.speed_y):
-                    self.speed_x += 0.707 * self.max_speed
-                    self.speed_y *= 0.707
-                else:
-                    self.speed_x += 1 * self.max_speed
-        else:
-            if(key == pygame.K_UP):
-                if(self.speed_x):
-                    self.speed_y += 0.707 * self.max_speed
-                    self.speed_x /= 0.707
-                else:
-                    self.speed_y += 1 * self.max_speed
-            if(key == pygame.K_DOWN):
-                if(self.speed_x):
-                    self.speed_y -= 0.707 * self.max_speed
-                    self.speed_x /= 0.707
-                else:
-                    self.speed_y -= 1 * self.max_speed
-            if(key == pygame.K_LEFT):
-                if(self.speed_y):
-                    self.speed_x += 0.707 * self.max_speed
-                    self.speed_y /= 0.707
-                else:
-                    self.speed_x += 1 * self.max_speed
-            if(key == pygame.K_RIGHT):
-                if(self.speed_y):
-                    self.speed_x -= 0.707 * self.max_speed
-                    self.speed_y /= 0.707
-                else:
-                    self.speed_x -= 1 * self.max_speed
+        if(not(pressed)):
+            if(key == pygame.K_UP): key = pygame.K_DOWN
+            elif(key == pygame.K_DOWN): key = pygame.K_UP
+            elif(key == pygame.K_LEFT): key = pygame.K_RIGHT
+            elif(key == pygame.K_RIGHT): key = pygame.K_LEFT
+        
+        if(key == pygame.K_UP): self.movement_state.add("U")
+        if(key == pygame.K_DOWN): self.movement_state.add("D")
+        if(key == pygame.K_LEFT): self.movement_state.add("L")
+        if(key == pygame.K_RIGHT): self.movement_state.add("R")
+            
+        if("U" in self.movement_state and "D" in self.movement_state):
+            self.movement_state.discard("U")
+            self.movement_state.discard("D")
+        if("L" in self.movement_state and "R" in self.movement_state):
+            self.movement_state.discard("L")
+            self.movement_state.discard("R")
+        
+        speed_x, speed_y = speeds[tuple(sorted(self.movement_state))]
+        self.speed_x = self.max_speed * speed_x
+        self.speed_y = self.max_speed * speed_y
 
 class bullet(sprite):
 
