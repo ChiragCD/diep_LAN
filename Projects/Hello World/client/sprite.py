@@ -1,5 +1,6 @@
 import pygame
 import draw_sprite
+import numpy as np
 from sprite_config import data
 
 class sprite(pygame.sprite.Sprite):
@@ -20,6 +21,21 @@ class sprite(pygame.sprite.Sprite):
         self.pos_y = pos_y
         self.update_rect()
 
+class bullet(sprite):
+
+    def __init__(self,  Type, pos_x, pos_y, orientation):
+
+        sprite.__init__(self,  Type, pos_x, pos_y, orientation)
+
+    # Function to update the properties of the sprite and bullet when a collision occurs
+    def collision(self , sprite):
+
+        pass
+
+    def update_rect(self):
+
+        pass
+
 class tank(sprite):
 
     def __init__(self, Type, pos_x, pos_y, orientation):
@@ -33,9 +49,14 @@ class tank(sprite):
         self.pos_y += self.speed_y
         self.update_rect()
 
+    # This function generates a new bullet, sets the properties for it according to the tank-type, and then returns it
     def shoot(self, *args):
 
-        pass
+        new_bullet = bullet(data[self.type]["bullet_type"], self.pos_x, self.pos_y, self.orientation)
+        # Currently I have ignored the effects of recoil and tank speed
+        new_bullet.speed_x = data[new_bullet.type]["speed"] * np.math.cos(new_bullet.orientation)
+        new_bullet.speed_y = data[new_bullet.type]["speed"] * np.math.sin(new_bullet.orientation)
+        return new_bullet
 
     def autoshoot(self, *args):
 
@@ -112,15 +133,4 @@ class tank(sprite):
                     self.speed_x -= 0.707 * self.max_speed
                     self.speed_y /= 0.707
                 else:
-                    self.speed_x -= 1 * self.max_speeda
-
-class bullet(sprite):
-
-    def __init__(self,  Type, pos_x, pos_y, orientation):
-
-        sprite.__init__(self,  Type, pos_x, pos_y, orientation)
-
-    # Function to update the properties of the sprite and bullet when a collision occurs
-    def collision(self , sprite):
-
-        pass
+                    self.speed_x -= 1 * self.max_speed
