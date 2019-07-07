@@ -17,4 +17,6 @@ action = {
     1 : chart.SHOOT,                          ## Left click
     3 : None,                           ## Right click
 
+    pygame.MOUSEMOTION : chart.REORIENT,
+
     }

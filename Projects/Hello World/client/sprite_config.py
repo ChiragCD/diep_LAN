@@ -8,16 +8,29 @@ data = {
         "colour" : (0, 0, 255),
         "radius" : 15,
         "bullet_type" : 201,
+        "linked_turret" : 1,
         },
 
     1 : {
+        "name" : "test_bullet_turret",
+        "linked_type" : 0,
+        "colour" : (125, 125, 125),
+        "length" : 25,               ## From centre of tank
+        "width" : 10,
+
+        "health" : None,
+        "max_speed" : None,
+        "radius" : None,
+        },
+
+    101 : {
         "name" : "square",
         "health" : 10,
         "colour" : (255, 255, 0),
         "radius" : 5,
         },
 
-    2 : {
+    102 : {
         "name" : "triangle",
         "health" : 25,
         "colour" : (255, 0, 0),
