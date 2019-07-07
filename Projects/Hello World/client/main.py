@@ -33,18 +33,40 @@ class program(object):
     def input_handler(self):
         
         loop.call_at(loop.time() + 0.01, self.input_handler)
+        # Some events such as firing a bullet generates a new object, so it is necessary to add those objects to the global list
+        # TODO Find a way to initialize new_obj to null, so that there can be a common if statement to check if the action returned a new object
         for event in pygame.event.get():
             if(event.type == pygame.KEYDOWN):
-                action[event.key](self.tank, event.key, 1)     ## 1 represents key down
+                new_obj = action[event.key](self.tank, event.key, 1)     ## 1 represents key down
+                if(new_obj) :
+                    new_group = pygame.sprite.Group()
+                    new_group.add(new_obj)
+                    self.groups.append(new_group)
+                    print(self.groups)
                 continue
             if(event.type == pygame.KEYUP):
-                action[event.key](self.tank, event.key, 0)     ## 0 represents key up
+                new_obj = action[event.key](self.tank, event.key, 0)     ## 0 represents key up
+                if (new_obj):
+                    new_group = pygame.sprite.Group()
+                    new_group.add(new_obj)
+                    self.groups.append(new_group)
+                    print(self.groups)
                 continue
             if(event.type == pygame.MOUSEBUTTONDOWN):
-                action[event.button](self.tank, 1)  ## 1 represents button pressed
+                new_obj = action[event.button](self.tank, 1)  ## 1 represents button pressed
+                if (new_obj):
+                    new_group = pygame.sprite.Group()
+                    new_group.add(new_obj)
+                    self.groups.append(new_group)
+                    print(self.groups)
                 continue
             if(event.type == pygame.MOUSEBUTTONUP):
-                action[event.button](self.tank, 0)  ## 0 represents button released
+                new_obj = action[event.button](self.tank, 0)  ## 0 represents button released
+                if (new_obj):
+                    new_group = pygame.sprite.Group()
+                    new_group.add(new_obj)
+                    self.groups.append(new_group)
+                    print(self.groups)
                 continue
             if(event.type == pygame.QUIT):
                 self.end()
