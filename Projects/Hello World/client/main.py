@@ -1,9 +1,19 @@
+"""
+The main program. Run this to start the game.
+If back.jpeg has not been properly created, re-download that file or run create_back.py
+(Note that this uses external modules numpy and imageio)
+"""
+
 import asyncio, pygame, sprite
 from input_config import action
 
 class program(object):
 
     def __init__(self):
+        
+        """
+        Setup the local objects, start the screen, etc.
+        """
 
         pygame.init()
         self.tank = sprite.tank(0, 900, 900, 0)
@@ -12,14 +22,22 @@ class program(object):
         self.back = pygame.image.load("back.jpeg").convert()
 
     def end(self):
+
+        """
+        End the program.
+        """
         
         pygame.quit()
         quit()
 
     async def main(self):
 
+        """
+        Start and run the program.
+        """
+
         self.own_tank = pygame.sprite.Group()
-        self.own_tank.add(self.tank, self.tank.turret)
+        self.own_tank.add(self.tank.turret, self.tank)
         self.groups = [self.own_tank]
         
         loop = asyncio.get_running_loop()
@@ -32,7 +50,12 @@ class program(object):
             ## etc.
 
     def input_handler(self):
+
+        """
+        Accept user inputs, perform actions as defined in input_config and input_to_function_chart files.
+        """
         
+        loop = asyncio.get_running_loop()
         loop.call_at(loop.time() + 0.01, self.input_handler)
         for event in pygame.event.get():
             if(event.type == pygame.MOUSEMOTION):
@@ -56,20 +79,37 @@ class program(object):
 
     def logic(self):
 
+        """
+        Run the program logic.
+        """
+
+        loop = asyncio.get_running_loop()
         loop.call_at(loop.time() + 0.02, self.logic)
         self.tank.move()
+        self.tank.turret.reorient(self.tank.orientation)
         return
 
     def output(self):
 
+        """
+        Update and display the screen.
+        """
+
+        loop = asyncio.get_running_loop()
         loop.call_at(loop.time() + 0.02, self.output)
+        self.screen.fill((125, 125, 125))
         self.map.blit(self.back, (0, 0))
         for group in self.groups:
             group.draw(self.map)
         self.screen.blit(self.map, (self.tank.field_of_view - self.tank.pos_x, self.tank.field_of_view - self.tank.pos_y))
         pygame.display.flip()
 
-loop = asyncio.get_event_loop()
-tester = program()
-loop.create_task(tester.main())
-loop.run_forever()
+def main():
+
+    loop = asyncio.get_event_loop()
+    tester = program()
+    loop.create_task(tester.main())
+    loop.run_forever()
+
+if(__name__ == "__main__"):
+    main()

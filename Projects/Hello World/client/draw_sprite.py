@@ -23,6 +23,10 @@ def bullet_turret():
 
 def get_drawing(Type):
 
+    """
+    Acts as a common interface, or index, to access the functions here.
+    """
+
     drawings = {
         0 : test_tank,
         1 : bullet_turret,
