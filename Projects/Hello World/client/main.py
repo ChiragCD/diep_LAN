@@ -114,6 +114,8 @@ class program(object):
         loop.call_at(loop.time() + 0.02, self.logic)
         self.tank.move()
         self.tank.turret.reorient(self.tank.orientation)
+        for bullet in self.groups[-1]:
+            bullet.move()
         return
 
     def output(self):

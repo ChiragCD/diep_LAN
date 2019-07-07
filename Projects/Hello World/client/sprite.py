@@ -32,10 +32,15 @@ class bullet(sprite):
 
         sprite.__init__(self,  Type, pos_x, pos_y, orientation)
 
-    def update_rect(self):
+    def move(self):
 
         self.pos_x += self.speed_x
         self.pos_y += self.speed_y
+
+    def update_rect(self):
+
+        self.rect.x = int(self.pos_x) - self.radius          ## the image is pasted on screen using its top left corner, rather than centre (pos_x, pos_y)
+        self.rect.y = int(self.pos_y) - self.radius
 
     # Function to update the properties of the sprite and bullet when a collision occurs
     def collision(self , sprite):
