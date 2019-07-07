@@ -44,7 +44,7 @@ data = {
             "speed" : 0.5,
             # Here the health field corrosponds to the damage. This is because a general sprite object doesnot have a property knaown as damage
             "health" : 10,
-            "radius" : 3,
+            "radius" : 6,
             "max_speed" : 1,
     }
 

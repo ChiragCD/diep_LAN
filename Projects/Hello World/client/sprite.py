@@ -32,14 +32,16 @@ class bullet(sprite):
 
         sprite.__init__(self,  Type, pos_x, pos_y, orientation)
 
+    def update_rect(self):
+
+        self.pos_x += self.speed_x
+        self.pos_y += self.speed_y
+
     # Function to update the properties of the sprite and bullet when a collision occurs
     def collision(self , sprite):
 
         pass
 
-    def update_rect(self):
-
-        pass
 
 class tank(sprite):
 
@@ -144,17 +146,6 @@ class tank(sprite):
         speed_x, speed_y = speeds[tuple(sorted(self.movement_state))]
         self.speed_x = self.max_speed * speed_x
         self.speed_y = self.max_speed * speed_y
-
-class bullet(sprite):
-
-    def __init__(self,  Type, pos_x, pos_y, orientation):
-
-        sprite.__init__(self,  Type, pos_x, pos_y, orientation)
-
-    # Function to update the properties of the sprite and bullet when a collision occurs
-    def collision(self , sprite):
-
-        pass
 
 class turret(sprite):
 

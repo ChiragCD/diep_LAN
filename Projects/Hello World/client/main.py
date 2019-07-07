@@ -61,7 +61,12 @@ class program(object):
         # TODO Find a way to initialize new_obj to null, so that there can be a common if statement to check if the action returned a new object
         for event in pygame.event.get():
             if(event.type == pygame.MOUSEMOTION):
-                action[event.type](self.tank)       ## track mouse motion
+                new_obj = action[event.type](self.tank)       ## track mouse motion
+                if (new_obj):
+                    new_group = pygame.sprite.Group()
+                    new_group.add(new_obj)
+                    self.groups.append(new_group)
+                    print(self.groups)
                 continue
             if(event.type == pygame.KEYDOWN):
                 new_obj = action[event.key](self.tank, event.key, 1)     ## 1 represents key down
