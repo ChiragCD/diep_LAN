@@ -63,12 +63,15 @@ class program(object):
             if(event.type == pygame.MOUSEMOTION):
                 new_obj = action[event.type](self.tank)       ## track mouse motion
                 continue
-            if(event.type == pygame.KEYDOWN):
-                new_obj = action[event.key](self.tank, event.key, 1)     ## 1 represents key down
-                continue
-            if(event.type == pygame.KEYUP):
-                new_obj = action[event.key](self.tank, event.key, 0)     ## 0 represents key up
-                continue
+            try:                                            ## Not very clean, better if Enum had a default value
+                if(event.type == pygame.KEYDOWN):
+                    new_obj = action[event.key](self.tank, event.key, 1)     ## 1 represents key down
+                    continue
+                if(event.type == pygame.KEYUP):
+                    new_obj = action[event.key](self.tank, event.key, 0)     ## 0 represents key up
+                    continue
+            except KeyError:
+                pass
             if(event.type == pygame.MOUSEBUTTONDOWN):
                 new_obj = action[event.button](self.tank, 1)  ## 1 represents button pressed
                 continue
