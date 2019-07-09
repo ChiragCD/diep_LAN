@@ -36,10 +36,10 @@ class program(object):
         Start and run the program.
         """
 
-        self.own_tank = pygame.sprite.Group()
-        self.own_tank.add(self.tank.turret, self.tank)
-        self.groups = [self.own_tank]
-        
+        self.own_tank = pygame.sprite.Group(self.tank.turret, self.tank)
+        self.own_bullets = pygame.sprite.Group(*self.tank.bullets)
+        self.groups = [self.own_bullets, self.own_tank]
+
         loop = asyncio.get_running_loop()
         loop.call_soon(self.output())
         loop.call_soon(self.logic())
@@ -62,43 +62,18 @@ class program(object):
         for event in pygame.event.get():
             if(event.type == pygame.MOUSEMOTION):
                 new_obj = action[event.type](self.tank)       ## track mouse motion
-                if (new_obj):
-                    new_group = pygame.sprite.Group()
-                    new_group.add(new_obj)
-                    self.groups.append(new_group)
-                    print(self.groups)
                 continue
             if(event.type == pygame.KEYDOWN):
                 new_obj = action[event.key](self.tank, event.key, 1)     ## 1 represents key down
-                if(new_obj) :
-                    new_group = pygame.sprite.Group()
-                    new_group.add(new_obj)
-                    self.groups.append(new_group)
-                    print(self.groups)
                 continue
             if(event.type == pygame.KEYUP):
                 new_obj = action[event.key](self.tank, event.key, 0)     ## 0 represents key up
-                if (new_obj):
-                    new_group = pygame.sprite.Group()
-                    new_group.add(new_obj)
-                    self.groups.append(new_group)
-                    print(self.groups)
                 continue
             if(event.type == pygame.MOUSEBUTTONDOWN):
                 new_obj = action[event.button](self.tank, 1)  ## 1 represents button pressed
-                if (new_obj):
-                    new_group = pygame.sprite.Group()
-                    new_group.add(new_obj)
-                    self.groups.append(new_group)
-                    print(self.groups)
                 continue
             if(event.type == pygame.MOUSEBUTTONUP):
                 new_obj = action[event.button](self.tank, 0)  ## 0 represents button released
-                if (new_obj):
-                    new_group = pygame.sprite.Group()
-                    new_group.add(new_obj)
-                    self.groups.append(new_group)
-                    print(self.groups)
                 continue
             if(event.type == pygame.QUIT):
                 self.end()
@@ -114,8 +89,14 @@ class program(object):
         loop.call_at(loop.time() + 0.02, self.logic)
         self.tank.move()
         self.tank.turret.reorient(self.tank.orientation)
-        for bullet in self.groups[-1]:
+        for bullet in self.tank.bullets:
             bullet.move()
+        if(self.own_bullets.sprites() != self.tank.bullets):
+            ## Update own_bullet group if bullets are added or deleted
+            [self.own_bullets.add(bullet) for bullet in self.tank.bullets if
+                    bullet not in self.own_bullets]
+            [self.own_bullets.remove(bullet) for bullet in self.own_bullets if
+                    bullet not in self.tank.bullets]
         return
 
     def output(self):
