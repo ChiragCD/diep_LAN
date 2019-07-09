@@ -1,6 +1,7 @@
 import pygame, math
 import draw_sprite
 from sprite_config import data
+from math_constants import *
 
 class sprite(pygame.sprite.Sprite):
 
@@ -98,8 +99,8 @@ class tank(sprite):
             self.orientation = math.atan2(-1 * y, x)    ## -1 handles pygame's inverted y-axis
                                                         ## atan2 returns between -pi and pi
         except ZeroDivisionError:
-            if(y > 0): self.orientation = -1 * math.pi / 2
-            else: self.orientation = math.pi / 2
+            if(y > 0): self.orientation = -1 * PIBY2
+            else: self.orientation = PIBY2
 
     def rotate_clockwise(self, *args):
 
@@ -128,7 +129,7 @@ class tank(sprite):
         Using keyboard keys, decide the tank's speed.
         """
 
-        speeds = {() : (0, 0), ("U",) : (0, -1), ("D",) : (0, 1), ("L",) : (-1, 0), ("R",) : (1, 0), ("L", "U") : (-0.707, -0.707), ("R", "U") : (0.707, -0.707), ("D", "L") : (-0.707, 0.707), ("D", "R") : (0.707, 0.707)}
+        speeds = {() : (0, 0), ("U",) : (0, -1), ("D",) : (0, 1), ("L",) : (-1, 0), ("R",) : (1, 0), ("L", "U") : (-1 * ROOT2BY2, -1 * ROOT2BY2), ("R", "U") : (ROOT2BY2, -1 * ROOT2BY2), ("D", "L") : (-1 * ROOT2BY2, ROOT2BY2), ("D", "R") : (ROOT2BY2, ROOT2BY2)}
 
         if(not(pressed)):
             if(key == pygame.K_UP): key = pygame.K_DOWN
