@@ -12,10 +12,10 @@ def test_tank():
 
 # This function is used to draw the bullet. Currently the color is hard-coded, will have to figure a way to make it available through parameters
 def bullet() :
-    surface = pygame.Surface((35, 35))
+    surface = pygame.Surface((2 * data[201]["radius"], 2 * data[201]["radius"]))
     surface.fill((255, 255, 255))
     surface.set_colorkey((255, 255, 255))
-    pygame.draw.circle(surface, ((0, 0, 255)), (data[0]["radius"], data[0]["radius"]), data[201]["radius"])
+    pygame.draw.circle(surface, data[0]["colour"], (data[201]["radius"], data[201]["radius"]), data[201]["radius"])
     return surface
 
 ## Type 1 - bullet turret
