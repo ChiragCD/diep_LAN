@@ -41,15 +41,17 @@ class program(object):
         self.groups = [self.own_bullets, self.own_tank]
 
         loop = asyncio.get_running_loop()
-        reference_time = loop.time()
+        reference_time = int(loop.time()) + 1                                   ##
 
         iteration = 1
         while(True):
-            if(loop.time() - reference_time < 0.01):
+            if(loop.time() < reference_time):
                 continue
+            if(loop.time() - reference_time > 0.1):
+                print("lag " + str(loop.time())  + "  " + str(reference_time))
             iteration += 1
-            reference_time = loop.time()
-            if(iteration % 2 == 0):
+            reference_time += 0.01
+            if(iteration % 10 == 0):
                 await self.output()
             await self.logic()
             await self.input_handler()

@@ -43,8 +43,9 @@ data = {
             # The speed is the relative speed of the bullet. When a bullet is fired, the absolute speed would be determined by the speed of tank and orientation
             "max_speed" : 5,
             # Here the health field corrosponds to the damage. This is because a general sprite object doesnot have a property knaown as damage
-            "health" : 10,
+            "health" : 15,
             "radius" : 5,
+            "damage" : 5,
     }
 
     }

@@ -134,15 +134,15 @@ class tank(sprite):
         speeds = {() : (0, 0), ("U",) : (0, -1), ("D",) : (0, 1), ("L",) : (-1, 0), ("R",) : (1, 0), ("L", "U") : (-1 * ROOT2BY2, -1 * ROOT2BY2), ("R", "U") : (ROOT2BY2, -1 * ROOT2BY2), ("D", "L") : (-1 * ROOT2BY2, ROOT2BY2), ("D", "R") : (ROOT2BY2, ROOT2BY2)}
 
         if(not(pressed)):
-            if(key == pygame.K_UP): key = pygame.K_DOWN
-            elif(key == pygame.K_DOWN): key = pygame.K_UP
-            elif(key == pygame.K_LEFT): key = pygame.K_RIGHT
-            elif(key == pygame.K_RIGHT): key = pygame.K_LEFT
+            if(key == pygame.K_UP or key == pygame.K_w): key = pygame.K_DOWN
+            elif(key == pygame.K_DOWN or key == pygame.K_s): key = pygame.K_UP
+            elif(key == pygame.K_LEFT or key == pygame.K_a): key = pygame.K_RIGHT
+            elif(key == pygame.K_RIGHT or key == pygame.K_d): key = pygame.K_LEFT
 
-        if(key == pygame.K_UP): self.movement_state.add("U")
-        if(key == pygame.K_DOWN): self.movement_state.add("D")
-        if(key == pygame.K_LEFT): self.movement_state.add("L")
-        if(key == pygame.K_RIGHT): self.movement_state.add("R")
+        if(key == pygame.K_UP or key == pygame.K_w): self.movement_state.add("U")
+        if(key == pygame.K_DOWN or key == pygame.K_s): self.movement_state.add("D")
+        if(key == pygame.K_LEFT or key == pygame.K_a): self.movement_state.add("L")
+        if(key == pygame.K_RIGHT or key == pygame.K_d): self.movement_state.add("R")
 
         if("U" in self.movement_state and "D" in self.movement_state):
             self.movement_state.discard("U")

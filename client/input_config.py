@@ -15,6 +15,11 @@ chart = {
 
 ## Input to action
 action = {
+
+    pygame.K_w : chart["UPDATE_SPEED"],
+    pygame.K_a : chart["UPDATE_SPEED"],
+    pygame.K_s : chart["UPDATE_SPEED"],
+    pygame.K_d : chart["UPDATE_SPEED"],
     
     pygame.K_UP : chart["UPDATE_SPEED"],
     pygame.K_DOWN : chart["UPDATE_SPEED"],
@@ -25,7 +30,7 @@ action = {
 
     pygame.K_e : chart["AUTOSHOOT"],
     pygame.K_c : chart["ROTATE_CLOCKWISE"],
-    pygame.K_a : chart["ROTATE_ANTICLOCKWISE"],
+    pygame.K_v : chart["ROTATE_ANTICLOCKWISE"],
 
     1 : chart["SHOOT"],                          ## Left click
     3 : None,                           ## Right click
