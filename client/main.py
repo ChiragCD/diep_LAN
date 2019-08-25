@@ -19,10 +19,14 @@ class program(object):
         pygame.init()
         self.tank = sprite.tank(0, 900, 900, 0)
         self.screen = pygame.display.set_mode((500, 500))
-        self.map = pygame.Surface((1000, 1000))
-        self.map1 = pygame.Surface((1000, 1000))
-        self.map.set_alpha(0)
-        self.map1.set_alpha(0)
+        self.map0 = pygame.Surface((1050, 1050))
+        self.map1 = pygame.Surface((1050, 1050))
+        self.map2 = pygame.Surface((1050, 1050))
+        self.map3 = pygame.Surface((1050, 1050))
+        self.map0.set_colorkey((254, 254, 254))
+        self.map1.set_colorkey((254, 254, 254))
+        self.map2.set_colorkey((254, 254, 254))
+        self.map3.set_colorkey((254, 254, 254))
         self.back = pygame.image.load("back.jpeg").convert()
 
     def end(self):
@@ -122,31 +126,54 @@ class program(object):
 
         def tile_decider():
 
-            if(self.tank.local_pos_x > 1000 and self.tank.local_pos_y > 1000):
-                self.screen.blit(self.back, (self.tank.field_of_view -
-                    self.tank.local_pos_x, self.tank.field_of_view -
-                    self.tank.local_pos_y))
-            if(self.tank.local_pos_x > 1000 and self.tank.local_pos_y < 1000):
-                self.screen.blit(self.back, (self.tank.field_of_view -
-                    self.tank.local_pos_x, self.tank.field_of_view -
-                    self.tank.local_pos_y - 1000))
-            if(self.tank.local_pos_x < 1000 and self.tank.local_pos_y > 1000):
-                self.screen.blit(self.back, (self.tank.field_of_view -
-                    self.tank.local_pos_x - 1000, self.tank.field_of_view -
-                    self.tank.local_pos_y))
-            if(self.tank.local_pos_x < 1000 and self.tank.local_pos_y < 1000):
-                self.screen.blit(self.back, (self.tank.field_of_view -
-                    self.tank.local_pos_x - 1000, self.tank.field_of_view -
-                    self.tank.local_pos_y - 1000))
+            if(self.tank.local_pos_x > 500 and self.tank.local_pos_y > 500):
+                return [self.tank.field_of_view - self.tank.local_pos_x,
+            self.tank.field_of_view - self.tank.local_pos_y,
+            self.tank.tile,
+            self.tank.tile + 1,
+            self.tank.tile + TILE_NUM,
+            self.tank.tile + TILE_NUM + 1]
+
+            if(self.tank.local_pos_x > 500 and self.tank.local_pos_y < 500):
+                return [self.tank.field_of_view - self.tank.local_pos_x,
+            self.tank.field_of_view - self.tank.local_pos_y - 1000,
+            self.tank.tile - TILE_NUM,
+            self.tank.tile - TILE_NUM + 1,
+            self.tank.tile,
+            self.tank.tile + 1]
+
+            if(self.tank.local_pos_x < 500 and self.tank.local_pos_y > 500):
+                return [self.tank.field_of_view - self.tank.local_pos_x - 1000,
+            self.tank.field_of_view - self.tank.local_pos_y,
+            self.tank.tile - 1,
+            self.tank.tile,
+            self.tank.tile + TILE_NUM - 1,
+            self.tank.tile + TILE_NUM]
+
+            if(self.tank.local_pos_x < 500 and self.tank.local_pos_y < 500):
+                return [self.tank.field_of_view - self.tank.local_pos_x - 1000,
+            self.tank.field_of_view - self.tank.local_pos_y - 1000,
+            self.tank.tile - TILE_NUM - 1,
+            self.tank.tile - TILE_NUM,
+            self.tank.tile - 1,
+            self.tank.tile]
 
         self.screen.fill((125, 125, 125))
-        tile_decider()
-        self.groups[self.tank.tile].draw(self.map)
-        self.screen.blit(self.map, (self.tank.field_of_view -
-            self.tank.local_pos_x, self.tank.field_of_view - self.tank.local_pos_y))
-        self.groups[self.tank.tile + 1].draw(self.map1)
-        self.screen.blit(self.map1, (1000 + self.tank.field_of_view -
-            self.tank.local_pos_x, self.tank.field_of_view - self.tank.local_pos_y))
+        self.map0.fill((254, 254, 254))
+        self.map1.fill((254, 254, 254))
+        self.map2.fill((254, 254, 254))
+        self.map3.fill((254, 254, 254))
+        decisions = tile_decider()
+        x, y = decisions.pop(0), decisions.pop(0)
+        self.screen.blit(self.back, (x, y))
+        self.groups[decisions.pop(0)].draw(self.map0)
+        self.groups[decisions.pop(0)].draw(self.map1)
+        self.groups[decisions.pop(0)].draw(self.map2)
+        self.groups[decisions.pop(0)].draw(self.map3)
+        self.screen.blit(self.map0, (x, y))
+        self.screen.blit(self.map1, (x + 1000, y))
+        self.screen.blit(self.map2, (x, y + 1000))
+        self.screen.blit(self.map3, (x + 1000, y + 1000))
         pygame.display.flip()
 
 def main():
