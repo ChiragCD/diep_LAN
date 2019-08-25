@@ -41,7 +41,7 @@ class program(object):
         self.own_bullets = pygame.sprite.Group(*self.tank.bullets)
         self.groups = [Group() for i in range(TILE_NUM * TILE_NUM)]
 
-        self.groups[0].add(self.tank.turret, self.tank)
+        self.groups[0].add(self.tank.turret, self.tank, sprite.square(101, 900, 900, 0))
 
         loop = asyncio.get_running_loop()
         reference_time = int(loop.time()) + 1                                   ##

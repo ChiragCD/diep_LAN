@@ -29,6 +29,15 @@ def bullet_turret():
     pygame.draw.rect(surface, data[1]["colour"], rect)
     return surface
 
+## Type 101 - square
+def square():
+
+    surface = pygame.Surface((2 * data[101]["radius"], 2 * data[101]["radius"]))
+    surface.fill((255, 255, 255))
+    surface.set_colorkey((255, 255, 255))
+    pygame.draw.rect(surface, data[101]["colour"], pygame.Rect((0, 0), (2 * data[101]["radius"], 2 * data[101]["radius"])))
+    return surface
+
 def get_drawing(Type):
 
     """
@@ -37,8 +46,9 @@ def get_drawing(Type):
 
     drawings = {
         0 : test_tank,
-        201 : bullet,
         1 : bullet_turret,
+        101 : square,
+        201 : bullet,
         }
 
     return drawings[Type]()

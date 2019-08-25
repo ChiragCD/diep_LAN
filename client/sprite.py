@@ -210,3 +210,21 @@ class turret(sprite):
         self.dimension = max(self.rect.height, self.rect.width)
         self.update_rect()
 
+class food(sprite):
+
+    def __init__(self, Type, pos_x, pos_y, orientation):
+
+        self.dimension = 2 * data[Type]["radius"]
+        sprite.__init__(self, Type, pos_x, pos_y, orientation)
+
+    def update_rect(self):
+
+        self.rect.x = self.local_pos_x - self.dimension / 2
+        self.rect.y = self.local_pos_y - self.dimension / 2
+
+class square(food):
+
+    def __init__(self, Type, pos_x, pos_y, orientation):
+
+        food.__init__(self, Type, pos_x, pos_y, orientation)
+
