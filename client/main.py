@@ -7,6 +7,7 @@ If back.jpeg has not been properly created, re-download that file or run create_
 import asyncio, pygame, sprite
 from input_config import action
 from game_constants import *
+from Group import Group
 
 class program(object):
 
@@ -19,14 +20,6 @@ class program(object):
         pygame.init()
         self.tank = sprite.tank(0, 900, 900, 0)
         self.screen = pygame.display.set_mode((500, 500))
-        self.map0 = pygame.Surface((1050, 1050))
-        self.map1 = pygame.Surface((1050, 1050))
-        self.map2 = pygame.Surface((1050, 1050))
-        self.map3 = pygame.Surface((1050, 1050))
-        self.map0.set_colorkey((254, 254, 254))
-        self.map1.set_colorkey((254, 254, 254))
-        self.map2.set_colorkey((254, 254, 254))
-        self.map3.set_colorkey((254, 254, 254))
         self.back = pygame.image.load("back.jpeg").convert()
 
     def end(self):
@@ -46,7 +39,7 @@ class program(object):
 
         self.own_tank = pygame.sprite.Group(self.tank.turret, self.tank)
         self.own_bullets = pygame.sprite.Group(*self.tank.bullets)
-        self.groups = [pygame.sprite.Group() for i in range(TILE_NUM * TILE_NUM)]
+        self.groups = [Group() for i in range(TILE_NUM * TILE_NUM)]
 
         self.groups[0].add(self.tank.turret, self.tank)
 
@@ -124,9 +117,9 @@ class program(object):
         Update and display the screen.
         """
 
-        def tile_decider():
+        def tile_decider(x_low, y_low):
 
-            if(self.tank.local_pos_x > 500 and self.tank.local_pos_y > 500):
+            if(not(x_low) and not(y_low)):
                 return [self.tank.field_of_view - self.tank.local_pos_x,
             self.tank.field_of_view - self.tank.local_pos_y,
             self.tank.tile,
@@ -134,7 +127,7 @@ class program(object):
             self.tank.tile + TILE_NUM,
             self.tank.tile + TILE_NUM + 1]
 
-            if(self.tank.local_pos_x > 500 and self.tank.local_pos_y < 500):
+            if(not(x_low) and y_low):
                 return [self.tank.field_of_view - self.tank.local_pos_x,
             self.tank.field_of_view - self.tank.local_pos_y - 1000,
             self.tank.tile - TILE_NUM,
@@ -142,7 +135,7 @@ class program(object):
             self.tank.tile,
             self.tank.tile + 1]
 
-            if(self.tank.local_pos_x < 500 and self.tank.local_pos_y > 500):
+            if(x_low and not(y_low)):
                 return [self.tank.field_of_view - self.tank.local_pos_x - 1000,
             self.tank.field_of_view - self.tank.local_pos_y,
             self.tank.tile - 1,
@@ -150,7 +143,7 @@ class program(object):
             self.tank.tile + TILE_NUM - 1,
             self.tank.tile + TILE_NUM]
 
-            if(self.tank.local_pos_x < 500 and self.tank.local_pos_y < 500):
+            if(x_low and y_low):
                 return [self.tank.field_of_view - self.tank.local_pos_x - 1000,
             self.tank.field_of_view - self.tank.local_pos_y - 1000,
             self.tank.tile - TILE_NUM - 1,
@@ -159,21 +152,13 @@ class program(object):
             self.tank.tile]
 
         self.screen.fill((125, 125, 125))
-        self.map0.fill((254, 254, 254))
-        self.map1.fill((254, 254, 254))
-        self.map2.fill((254, 254, 254))
-        self.map3.fill((254, 254, 254))
-        decisions = tile_decider()
+        decisions = tile_decider(self.tank.local_pos_x < 500, self.tank.local_pos_y < 500)
         x, y = decisions.pop(0), decisions.pop(0)
         self.screen.blit(self.back, (x, y))
-        self.groups[decisions.pop(0)].draw(self.map0)
-        self.groups[decisions.pop(0)].draw(self.map1)
-        self.groups[decisions.pop(0)].draw(self.map2)
-        self.groups[decisions.pop(0)].draw(self.map3)
-        self.screen.blit(self.map0, (x, y))
-        self.screen.blit(self.map1, (x + 1000, y))
-        self.screen.blit(self.map2, (x, y + 1000))
-        self.screen.blit(self.map3, (x + 1000, y + 1000))
+        self.groups[decisions.pop(0)].draw(self.screen, (x, y))
+        self.groups[decisions.pop(0)].draw(self.screen, (x + 1000, y))
+        self.groups[decisions.pop(0)].draw(self.screen, (x, y + 1000))
+        self.groups[decisions.pop(0)].draw(self.screen, (x + 1000, y + 1000))
         pygame.display.flip()
 
 def main():
