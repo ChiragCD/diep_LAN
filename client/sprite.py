@@ -2,6 +2,7 @@ import pygame, math
 import draw_sprite
 from sprite_config import data
 from math_constants import *
+from game_constants import *
 
 class sprite(pygame.sprite.Sprite):
 
@@ -24,7 +25,15 @@ class sprite(pygame.sprite.Sprite):
         self.radius = data[Type]["radius"]
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.update_tiles()
         self.update_rect()
+
+    def update_tiles(self):
+
+        self.local_pos_x = self.pos_x % 1000
+        self.local_pos_y = self.pos_y % 1000
+        self.tile = int((self.pos_x - self.local_pos_x) / 1000 + TILE_NUM * (self.pos_y -
+                self.local_pos_y) / 1000)                                            ## The map is divided into tiles of 1000 * 1000 pixels.
 
 class bullet(sprite):
 
@@ -38,12 +47,13 @@ class bullet(sprite):
 
         self.pos_x += self.speed_x
         self.pos_y += self.speed_y
+        self.update_tiles()
         self.update_rect()
 
     def update_rect(self):
 
-        self.rect.x = int(self.pos_x) - self.radius          ## the image is pasted on screen using its top left corner, rather than centre (pos_x, pos_y)
-        self.rect.y = int(self.pos_y) - self.radius
+        self.rect.x = int(self.local_pos_x) - self.radius          ## the image is pasted on screen using its top left corner, rather than centre (pos_x, pos_y)
+        self.rect.y = int(self.local_pos_y) - self.radius
 
     # Function to update the properties of the sprite and bullet when a collision occurs
     def collision(self , sprite):
@@ -73,6 +83,7 @@ class tank(sprite):
 
         self.pos_x += self.speed_x
         self.pos_y += self.speed_y
+        self.update_tiles()
         self.update_rect()
         self.turret.move()
 
@@ -122,8 +133,8 @@ class tank(sprite):
         A display function - update the drawing's position in accordance with the sprite's position.
         """
 
-        self.rect.x = int(self.pos_x) - self.radius          ## the image is pasted on screen using its top left corner, rather than centre (pos_x, pos_y)
-        self.rect.y = int(self.pos_y) - self.radius
+        self.rect.x = int(self.local_pos_x) - self.radius          ## the image is pasted on screen using its top left corner, rather than centre (pos_x, pos_y)
+        self.rect.y = int(self.local_pos_y) - self.radius
 
     def update_speed(self, key, pressed):
 
@@ -175,8 +186,8 @@ class turret(sprite):
         Display function - Set the image position in accordance with the parent tank's position.
         """
 
-        self.rect.x = self.tank.pos_x - self.dimension / 2  ## self.pos_x, pos_y are not used or maintained, these are always expected to be same as that of tank
-        self.rect.y = self.tank.pos_y - self.dimension / 2
+        self.rect.x = self.tank.local_pos_x - self.dimension / 2  ## self.pos_x, pos_y are not used or maintained, these are always expected to be same as that of tank
+        self.rect.y = self.tank.local_pos_y - self.dimension / 2
 
     def move(self):
 
@@ -185,6 +196,7 @@ class turret(sprite):
         """
 
         self.update_rect()
+        self.tile = self.tank.tile
 
     def reorient(self, angle):
 

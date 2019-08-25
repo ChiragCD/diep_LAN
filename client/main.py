@@ -6,6 +6,7 @@ If back.jpeg has not been properly created, re-download that file or run create_
 
 import asyncio, pygame, sprite
 from input_config import action
+from game_constants import *
 
 class program(object):
 
@@ -18,7 +19,10 @@ class program(object):
         pygame.init()
         self.tank = sprite.tank(0, 900, 900, 0)
         self.screen = pygame.display.set_mode((500, 500))
-        self.map = pygame.Surface((10000, 10000))
+        self.map = pygame.Surface((1000, 1000))
+        self.map1 = pygame.Surface((1000, 1000))
+        self.map.set_alpha(0)
+        self.map1.set_alpha(0)
         self.back = pygame.image.load("back.jpeg").convert()
 
     def end(self):
@@ -38,20 +42,22 @@ class program(object):
 
         self.own_tank = pygame.sprite.Group(self.tank.turret, self.tank)
         self.own_bullets = pygame.sprite.Group(*self.tank.bullets)
-        self.groups = [self.own_bullets, self.own_tank]
+        self.groups = [pygame.sprite.Group() for i in range(TILE_NUM * TILE_NUM)]
+
+        self.groups[0].add(self.tank.turret, self.tank)
 
         loop = asyncio.get_running_loop()
         reference_time = int(loop.time()) + 1                                   ##
 
         iteration = 1
         while(True):
-            if(loop.time() < reference_time):
+            if(loop.time() < reference_time - 0.005):
                 continue
-            if(loop.time() - reference_time > 0.1):
+            if(loop.time() - reference_time > 0.01):
                 print("lag " + str(loop.time())  + "  " + str(reference_time))
             iteration += 1
             reference_time += 0.01
-            if(iteration % 10 == 0):
+            if(iteration % 5 == 0):
                 await self.output()
             await self.logic()
             await self.input_handler()
@@ -98,12 +104,14 @@ class program(object):
         self.tank.move()
         for bullet in self.tank.bullets:
             bullet.move()
-        if(self.own_bullets.sprites() != self.tank.bullets):
-            ## Update own_bullet group if bullets are added or deleted
-            [self.own_bullets.add(bullet) for bullet in self.tank.bullets if
-                    bullet not in self.own_bullets]
-            [self.own_bullets.remove(bullet) for bullet in self.own_bullets if
-                    bullet not in self.tank.bullets]
+            if(bullet not in self.groups[bullet.tile]):
+                self.groups[bullet.tile].add(bullet)
+        for tile_num, group in enumerate(self.groups):
+            for sprite in group:
+                if(sprite.tile != tile_num):
+                    group.remove(sprite)
+                    if(sprite not in self.groups[sprite.tile]):
+                        self.groups[sprite.tile].add(sprite)
         return
 
     async def output(self):
@@ -112,11 +120,33 @@ class program(object):
         Update and display the screen.
         """
 
+        def tile_decider():
+
+            if(self.tank.local_pos_x > 1000 and self.tank.local_pos_y > 1000):
+                self.screen.blit(self.back, (self.tank.field_of_view -
+                    self.tank.local_pos_x, self.tank.field_of_view -
+                    self.tank.local_pos_y))
+            if(self.tank.local_pos_x > 1000 and self.tank.local_pos_y < 1000):
+                self.screen.blit(self.back, (self.tank.field_of_view -
+                    self.tank.local_pos_x, self.tank.field_of_view -
+                    self.tank.local_pos_y - 1000))
+            if(self.tank.local_pos_x < 1000 and self.tank.local_pos_y > 1000):
+                self.screen.blit(self.back, (self.tank.field_of_view -
+                    self.tank.local_pos_x - 1000, self.tank.field_of_view -
+                    self.tank.local_pos_y))
+            if(self.tank.local_pos_x < 1000 and self.tank.local_pos_y < 1000):
+                self.screen.blit(self.back, (self.tank.field_of_view -
+                    self.tank.local_pos_x - 1000, self.tank.field_of_view -
+                    self.tank.local_pos_y - 1000))
+
         self.screen.fill((125, 125, 125))
-        self.map.blit(self.back, (0, 0))
-        for group in self.groups:
-            group.draw(self.map)
-        self.screen.blit(self.map, (self.tank.field_of_view - self.tank.pos_x, self.tank.field_of_view - self.tank.pos_y))
+        tile_decider()
+        self.groups[self.tank.tile].draw(self.map)
+        self.screen.blit(self.map, (self.tank.field_of_view -
+            self.tank.local_pos_x, self.tank.field_of_view - self.tank.local_pos_y))
+        self.groups[self.tank.tile + 1].draw(self.map1)
+        self.screen.blit(self.map1, (1000 + self.tank.field_of_view -
+            self.tank.local_pos_x, self.tank.field_of_view - self.tank.local_pos_y))
         pygame.display.flip()
 
 def main():
