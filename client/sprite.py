@@ -37,16 +37,20 @@ class sprite(pygame.sprite.Sprite):
 
 class bullet(sprite):
 
-    def __init__(self, Type, pos_x, pos_y, orientation):
+    def __init__(self, Type, pos_x, pos_y, orientation, tank):
 
         sprite.__init__(self, Type, pos_x, pos_y, orientation)
         self.speed_x = self.max_speed * math.cos(self.orientation)
         self.speed_y = self.max_speed * -1 * math.sin(self.orientation)
+        self.tank = tank
 
     def move(self):
 
         self.pos_x += self.speed_x
         self.pos_y += self.speed_y
+        self.lose_health(0.01)
+        if(self.pos_x < 0 or self.pos_y < 0 or self.pos_x > TILE_NUM * 1000 or self.pos_y > TILE_NUM * 1000):
+            self.kill()
         self.update_tiles()
         self.update_rect()
 
@@ -60,6 +64,17 @@ class bullet(sprite):
 
         pass
 
+    def lose_health(self, value):
+
+        self.health -= value
+        if(self.health <= 0):
+            self.kill()
+
+    def kill(self):
+
+        self.health = 0
+        self.tank.bullets.remove(self)
+        del self
 
 class tank(sprite):
 
@@ -90,7 +105,8 @@ class tank(sprite):
     # This function generates a new bullet, sets the properties for it according to the tank-type, and then returns it
     def shoot(self, *args):
 
-        self.bullets.append(bullet(data[self.type]["bullet_type"], self.pos_x, self.pos_y, self.orientation))
+        self.bullets.append(bullet(data[self.type]["bullet_type"], self.pos_x, self.pos_y, self.orientation, self))
+        print(self.bullets)
         # Currently I have ignored the effects of recoil and tank speed
 
     def autoshoot(self, *args):

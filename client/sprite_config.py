@@ -18,7 +18,7 @@ data = {
         "length" : 25,               ## From centre of tank
         "width" : 10,
 
-        "health" : None,
+        "health" : 1,               ## Nominal
         "max_speed" : None,
         "radius" : None,
         },

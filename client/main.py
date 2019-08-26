@@ -54,7 +54,7 @@ class program(object):
                 print("lag " + str(loop.time())  + "  " + str(reference_time))
             iteration += 1
             reference_time += 0.01
-            if(iteration % 5 == 0):
+            if(iteration % 2 == 0):
                 await self.output()
             await self.logic()
             await self.input_handler()
@@ -109,6 +109,8 @@ class program(object):
                     group.remove(sprite)
                     if(sprite not in self.groups[sprite.tile]):
                         self.groups[sprite.tile].add(sprite)
+                if(sprite.health == 0):
+                    group.remove(sprite)
         return
 
     async def output(self):
@@ -117,7 +119,7 @@ class program(object):
         Update and display the screen.
         """
 
-        def tile_decider(x_low, y_low):
+        def tile_decider(x_low, y_low, current_tile):
 
             if(not(x_low) and not(y_low)):
                 return [self.tank.field_of_view - self.tank.local_pos_x,
@@ -152,7 +154,7 @@ class program(object):
             self.tank.tile]
 
         self.screen.fill((125, 125, 125))
-        decisions = tile_decider(self.tank.local_pos_x < 500, self.tank.local_pos_y < 500)
+        decisions = tile_decider(self.tank.local_pos_x < 500, self.tank.local_pos_y < 500, self.tank.tile)
         x, y = decisions.pop(0), decisions.pop(0)
         self.screen.blit(self.back, (x, y))
         self.groups[decisions.pop(0)].draw(self.screen, (x, y))
